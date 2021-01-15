@@ -75,10 +75,13 @@ class ChatUser {
 
     if (msg.type === "join") this.handleJoin(msg.name);
     else if (msg.type === "get-joke") this.handleJoke();
+    else if (msg.type === "get-members") this.handleMembers();
     else if (msg.type === "chat") this.handleChat(msg.text);
     else throw new Error(`bad message: ${msg.type}`);
   }
+
   /* Handle the getting and sending of jokes */
+
   async handleJoke() {
     console.log("Should have sent joke.");
     let joke = await axios({
@@ -92,6 +95,21 @@ class ChatUser {
         text: `${joke}.`,
       }));
   }
+
+    /* Handle the getting and sending of members in the user's room */
+
+    handleMembers() {
+      console.log("Should have sent members.");
+      let members = this.room.members.values();
+      console.log('members are', members);
+      let membersText = [...members].map(m => m.name).join(', ');
+      this.send(JSON.stringify(
+        {
+          type: "note",
+          text: `${membersText}`,
+        }));
+    }
+
   /** Connection was closed: leave room, announce exit to others. */
 
   handleClose() {

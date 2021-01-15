@@ -61,6 +61,9 @@ $("form").submit(function (evt) {
   if (data.text==="/joke"){
     data.type = "get-joke";
   }
+  if (data.text==="/members"){
+    data.type = "get-members";
+  }
   ws.send(JSON.stringify(data));
 
   $("#m").val("");

@@ -4,7 +4,6 @@ const urlParts = document.URL.split("/");
 const roomName = urlParts[urlParts.length - 1];
 const ws = new WebSocket(`ws://localhost:3000/chat/${roomName}`);
 
-const testJoke = `I wouldn't buy anything with velcro. It's a total rip-off.`;
 const name = prompt("Username?");
 
 
@@ -63,6 +62,11 @@ $("form").submit(function (evt) {
   }
   if (data.text==="/members"){
     data.type = "get-members";
+  }
+  if (data.text.startsWith('/name')){
+    data.type = "name-change";
+    let splitData = data.text.split(' ');
+    data.text = splitData[1];
   }
   if (data.text.startsWith('/priv')){
     data.type = "private-message";

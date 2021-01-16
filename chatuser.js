@@ -76,6 +76,7 @@ class ChatUser {
     if (msg.type === "join") this.handleJoin(msg.name);
     else if (msg.type === "get-joke") this.handleJoke();
     else if (msg.type === "get-members") this.handleMembers();
+    else if (msg.type === "name-change") this.nameChange(msg.text);
     else if (msg.type === "private-message") {
       this.handlePrivateMessage(msg.user, msg.text);
     }
@@ -97,6 +98,16 @@ class ChatUser {
         type: "note",
         text: `${joke}.`,
       }));
+  }
+
+  /* Change user name and braodcast this change. */
+  nameChange(newName) {
+    let oldName = this.name;
+    this.name = newName;
+    this.room.broadcast({
+      type: "note",
+      text: `${oldName} has changed their name to ${newName}!`
+    });
   }
 
   /* Handle the getting and sending of members in the user's room */

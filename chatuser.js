@@ -129,30 +129,35 @@ class ChatUser {
   handlePrivateMessage(username, text) {
     console.log("private message.");
     let members = this.room.members;
-    for (let member of members) {
-      if (member.name === username) {
-        member.send(JSON.stringify(
-          {
-            type: "note",
-            text,
-          }));
-        this.send(JSON.stringify(
-          {
-            type: "note",
-            text: "Message sent!"
-          }
-        ));
-        return;
-      }
-    }
-    this.send(JSON.stringify(
-      {
-        type: "note",
-        text: `No user found in room: ${username}`
-      }
-    ));
+    let toUser = [...members].find(m => m.name === username);
+    this.sendPM({ toUser, username });
   }
 
+  /* Helper method to send a private message */
+
+  sendPM({ toUser, username }) {
+    if (toUser) {
+      toUser.send(JSON.stringify(
+        {
+          type: "note",
+          text,
+        }));
+      this.send(JSON.stringify(
+        {
+          type: "note",
+          text: "Message sent!"
+        }
+      ));
+    }
+    else {
+      this.send(JSON.stringify(
+        {
+          type: "note",
+          text: `No user found in room: ${username}`
+        }
+      ));
+    }
+  }
   /** Connection was closed: leave room, announce exit to others. */
 
   handleClose() {

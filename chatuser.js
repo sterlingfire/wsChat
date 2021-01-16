@@ -148,7 +148,7 @@ class ChatUser {
     this.send(JSON.stringify(
       {
         type: "note",
-        test: `No user found in room: ${username}`
+        text: `No user found in room: ${username}`
       }
     ));
   }

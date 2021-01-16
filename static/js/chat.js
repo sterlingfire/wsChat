@@ -64,6 +64,14 @@ $("form").submit(function (evt) {
   if (data.text==="/members"){
     data.type = "get-members";
   }
+  if (data.text.startsWith('/priv')){
+    data.type = "private-message";
+    let splitData = data.text.split(' ');
+    // remove '/priv'
+    splitData.shift();
+    data.user = splitData.shift();
+    data.text = splitData.join(' ');
+  }
   ws.send(JSON.stringify(data));
 
   $("#m").val("");

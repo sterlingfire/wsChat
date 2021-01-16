@@ -76,6 +76,9 @@ class ChatUser {
     if (msg.type === "join") this.handleJoin(msg.name);
     else if (msg.type === "get-joke") this.handleJoke();
     else if (msg.type === "get-members") this.handleMembers();
+    else if (msg.type === "private-message") {
+      this.handlePrivateMessage(msg.user, msg.text);
+    }
     else if (msg.type === "chat") this.handleChat(msg.text);
     else throw new Error(`bad message: ${msg.type}`);
   }
@@ -96,19 +99,48 @@ class ChatUser {
       }));
   }
 
-    /* Handle the getting and sending of members in the user's room */
+  /* Handle the getting and sending of members in the user's room */
 
-    handleMembers() {
-      console.log("Should have sent members.");
-      let members = this.room.members.values();
-      console.log('members are', members);
-      let membersText = [...members].map(m => m.name).join(', ');
-      this.send(JSON.stringify(
-        {
-          type: "note",
-          text: `${membersText}`,
-        }));
+  handleMembers() {
+    console.log("Should have sent members.");
+    let members = this.room.members.values();
+    console.log('members are', members);
+    let membersText = [...members].map(m => m.name).join(', ');
+    this.send(JSON.stringify(
+      {
+        type: "note",
+        text: `${membersText}`,
+      }));
+  }
+
+  /* Handle the getting and sending of private messages */
+
+  handlePrivateMessage(username, text) {
+    console.log("private message.");
+    let members = this.room.members;
+    for (let member of members) {
+      if (member.name === username) {
+        member.send(JSON.stringify(
+          {
+            type: "note",
+            text,
+          }));
+        this.send(JSON.stringify(
+          {
+            type: "note",
+            text: "Message sent!"
+          }
+        ));
+        return;
+      }
     }
+    this.send(JSON.stringify(
+      {
+        type: "note",
+        test: `No user found in room: ${username}`
+      }
+    ));
+  }
 
   /** Connection was closed: leave room, announce exit to others. */
 
